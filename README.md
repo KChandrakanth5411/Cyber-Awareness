@@ -152,6 +152,15 @@ The project uses GitHub Actions for continuous integration and deployment:
 - Customizable training paths
 - Multi-language support
 
-## License
+🤝 Contributing
 
-MIT
+Contributions, feature requests, and bug reports are welcome!
+
+Fork the repo
+
+Create a feature branch: git checkout -b feat/some-feature
+
+Commit with a clear message
+
+Open a Pull Request
+(You can add a CONTRIBUTING.md later if you want stricter guidelines.)
