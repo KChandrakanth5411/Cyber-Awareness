@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+  # Frontend React application
+  frontend:
+    build:
+      context: ./apps/web-frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./apps/web-frontend:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - VITE_API_URL=http://localhost:5000/api
+    depends_on:
+      - api
+
+  # Backend API service
+  api:
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./apps/api:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - PORT=5000
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/cyberawareness
+      - JWT_SECRET=dev_secret_key_change_in_production
+      - FRONTEND_URL=http://localhost:3000
+      - DETECTOR_URL=http://detector:8001
+    depends_on:
+      - db
+      - detector
+
+  # Phishing detection service
+  detector:
+    build:
+      context: ./services/detector
+      dockerfile: Dockerfile
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./services/detector:/app
+    environment:
+      - PORT=8001
+      - API_URL=http://api:5000
+      - FRONTEND_URL=http://localhost:3000
+
+  # PostgreSQL database
+  db:
+    image: postgres:15
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=cyberawareness
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
